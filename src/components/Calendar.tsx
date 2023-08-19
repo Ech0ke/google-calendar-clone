@@ -1,14 +1,44 @@
-import { useState } from "react";
+import { useState, createContext, useContext } from "react";
+import {
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
 import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
 
-function Calendar() {
-  return (
-    <div className="calendar">
-      <CalendarHeader />
-      <CalendarBody />
+type ContextType = {
+  visibleMonth: Date;
+  visibleDates: Date[];
+  setVisibleMonth: React.Dispatch<React.SetStateAction<Date>>;
+};
 
-      {/* <div class="modal">
+const Context = createContext<ContextType | null>(null);
+
+export function useCalendarContext() {
+  const calendarContext = useContext(Context);
+  if (calendarContext == null) {
+    throw new Error("Must use within provider");
+  }
+  return calendarContext;
+}
+
+function Calendar() {
+  const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
+  const visibleDates = eachDayOfInterval({
+    start: startOfWeek(startOfMonth(visibleMonth)),
+    end: endOfWeek(endOfMonth(visibleMonth)),
+  });
+
+  return (
+    <Context.Provider value={{ visibleMonth, visibleDates, setVisibleMonth }}>
+      <div className="calendar">
+        <CalendarHeader />
+        <CalendarBody />
+
+        {/* <div class="modal">
         <div class="overlay"></div>
         <div class="modal-body">
           <div class="modal-title">
@@ -107,7 +137,8 @@ function Calendar() {
           </form>
         </div>
       </div> */}
-    </div>
+      </div>
+    </Context.Provider>
   );
 }
 
