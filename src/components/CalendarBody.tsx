@@ -1,9 +1,18 @@
-import React from "react";
+import { getDate } from "date-fns";
+import { useCalendarContext } from "./Calendar";
+import Day from "./Day";
 
 function CalendarBody() {
+  const { visibleDates } = useCalendarContext();
+
+  const weekNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   return (
     <div className="days">
-      <div className="day non-month-day old-month-day">
+      {visibleDates.map((date, index) => (
+        <Day key={date.toString()} date={date} weekName={weekNames[index]} />
+      ))}
+
+      {/* <div className="day non-month-day old-month-day">
         <div className="day-header">
           <div className="week-name">Sun</div>
           <div className="day-number">28</div>
@@ -294,7 +303,7 @@ function CalendarBody() {
           <div className="day-number">1</div>
           <button className="add-event-btn">+</button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
