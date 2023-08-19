@@ -8,7 +8,13 @@ type DayProps = {
 };
 
 function Day({ date, weekName }: DayProps) {
-  const { visibleMonth } = useCalendarContext();
+  const { visibleMonth, setEventDate, setIsEventModalOpen } =
+    useCalendarContext();
+
+  const handleEventModalOpen = () => {
+    setEventDate(date);
+    setIsEventModalOpen(true);
+  };
   return (
     <div
       className={`day ${
@@ -26,7 +32,9 @@ function Day({ date, weekName }: DayProps) {
         >
           {date.getDate()}
         </div>
-        <button className="add-event-btn">+</button>
+        <button className="add-event-btn" onClick={handleEventModalOpen}>
+          +
+        </button>
       </div>
       {/* <div className="events">
         <button className="all-day-event blue event">

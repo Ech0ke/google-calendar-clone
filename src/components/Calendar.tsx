@@ -8,11 +8,16 @@ import {
 } from "date-fns";
 import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
+import EventModal from "./EventModal";
 
 type ContextType = {
   visibleMonth: Date;
   visibleDates: Date[];
   setVisibleMonth: React.Dispatch<React.SetStateAction<Date>>;
+  eventDate: Date | undefined;
+  setEventDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+  isEventModalOpen: boolean;
+  setIsEventModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const Context = createContext<ContextType | null>(null);
@@ -27,13 +32,25 @@ export function useCalendarContext() {
 
 function Calendar() {
   const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
+  const [eventDate, setEventDate] = useState<Date>();
+  const [isEventModalOpen, setIsEventModalOpen] = useState<boolean>(false);
   const visibleDates = eachDayOfInterval({
     start: startOfWeek(startOfMonth(visibleMonth)),
     end: endOfWeek(endOfMonth(visibleMonth)),
   });
 
   return (
-    <Context.Provider value={{ visibleMonth, visibleDates, setVisibleMonth }}>
+    <Context.Provider
+      value={{
+        visibleMonth,
+        visibleDates,
+        setVisibleMonth,
+        eventDate,
+        setEventDate,
+        isEventModalOpen,
+        setIsEventModalOpen,
+      }}
+    >
       <div className="calendar">
         <CalendarHeader />
         <CalendarBody />
@@ -137,6 +154,7 @@ function Calendar() {
           </form>
         </div>
       </div> */}
+        <EventModal />
       </div>
     </Context.Provider>
   );

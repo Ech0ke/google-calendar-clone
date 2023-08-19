@@ -1,4 +1,3 @@
-import { getDate } from "date-fns";
 import { useCalendarContext } from "./Calendar";
 import Day from "./Day";
 
