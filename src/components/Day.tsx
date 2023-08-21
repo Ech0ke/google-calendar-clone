@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useCalendarContext } from "../context/CalendarContext";
 import { isBefore, isSameDay, isSameMonth, startOfDay } from "date-fns";
+import { useEventsContext } from "../context/EventsContext";
 
 type DayProps = {
   date: Date;
@@ -10,6 +11,16 @@ type DayProps = {
 function Day({ date, weekName }: DayProps) {
   const { visibleMonth, setEventDate, setIsEventModalOpen } =
     useCalendarContext();
+
+  const { events } = useEventsContext();
+
+  //find events taht occour on rendered date
+  const matchingEvents = useMemo(
+    () => events.filter((event) => isSameDay(event.date, date)),
+    [events, date]
+  );
+
+  console.log("Matched events: ", matchingEvents);
 
   const handleEventModalOpen = () => {
     setEventDate(date);
@@ -36,6 +47,14 @@ function Day({ date, weekName }: DayProps) {
           +
         </button>
       </div>
+      <div className="events">
+        {matchingEvents.map((event) => (
+          <button className="all-day-event blue event">
+            <div className="event-name">{event.name}</div>
+          </button>
+        ))}
+      </div>
+
       {/* <div className="events">
         <button className="all-day-event blue event">
           <div className="event-name">Short</div>
