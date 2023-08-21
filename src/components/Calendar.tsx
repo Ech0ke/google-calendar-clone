@@ -1,19 +1,10 @@
 import { useState, createContext, useContext } from "react";
-import {
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
-  startOfMonth,
-  startOfWeek,
-} from "date-fns";
 import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
 import EventModal from "./NewEventModal";
 import { UnionOmit } from "../types/UnionOmit";
 import { Event } from "../types/Event";
-import { CalendarContext } from "./context/CalendarContext";
-
-const EVENT_COLORS: string[] = ["red", "green", "blue"];
+import { CalendarProvider } from "./context/CalendarContext";
 
 type EventsContext = {
   events: Event[];
@@ -31,14 +22,6 @@ export function useEventsContext() {
 }
 
 function Calendar() {
-  const [visibleMonth, setVisibleMonth] = useState<Date>(new Date());
-  const [eventDate, setEventDate] = useState<Date>();
-  const [isEventModalOpen, setIsEventModalOpen] = useState<boolean>(false);
-  const visibleDates = eachDayOfInterval({
-    start: startOfWeek(startOfMonth(visibleMonth)),
-    end: endOfWeek(endOfMonth(visibleMonth)),
-  });
-
   const [events, setEvents] = useState<Event[]>([]);
 
   const addEvent = (event: UnionOmit<Event, "id">) => {
@@ -52,18 +35,7 @@ function Calendar() {
   };
 
   return (
-    <CalendarContext.Provider
-      value={{
-        visibleMonth,
-        visibleDates,
-        setVisibleMonth,
-        eventDate,
-        setEventDate,
-        isEventModalOpen,
-        setIsEventModalOpen,
-        EVENT_COLORS,
-      }}
-    >
+    <CalendarProvider>
       <EventsContext.Provider value={{ events, addEvent }}>
         <div className="calendar">
           <CalendarHeader />
@@ -171,7 +143,7 @@ function Calendar() {
           <EventModal />
         </div>
       </EventsContext.Provider>
-    </CalendarContext.Provider>
+    </CalendarProvider>
   );
 }
 

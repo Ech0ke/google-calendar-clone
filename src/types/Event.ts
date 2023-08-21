@@ -1,4 +1,4 @@
-const EVENT_COLORS: string[] = ["red", "green", "blue"];
+export const EVENT_COLORS: string[] = ["red", "green", "blue"];
 
 export type Event = {
   id: string;
