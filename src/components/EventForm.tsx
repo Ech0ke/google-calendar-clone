@@ -1,8 +1,7 @@
 import { useRef, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import { useCalendarContext } from "./context/CalendarContext";
-import { useEventsContext } from "./Calendar";
-import { Event } from "../types/Event";
+import { useEventsContext } from "./context/EventsContext";
+import { EVENT_COLORS, Event } from "../types/Event";
 import { UnionOmit } from "../types/UnionOmit";
 
 function EventForm({
@@ -12,7 +11,6 @@ function EventForm({
   date?: Date;
   handleClose: () => void;
 }) {
-  const { EVENT_COLORS } = useCalendarContext();
   const { addEvent } = useEventsContext();
   const nameRef = useRef<HTMLInputElement>(null);
   const [isAllDayChecked, setIsAllDayChecked] = useState<boolean>(false);

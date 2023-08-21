@@ -1,42 +1,13 @@
-import { useState, createContext, useContext } from "react";
 import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
 import EventModal from "./NewEventModal";
-import { UnionOmit } from "../types/UnionOmit";
-import { Event } from "../types/Event";
 import { CalendarProvider } from "./context/CalendarContext";
-
-type EventsContext = {
-  events: Event[];
-  addEvent: (event: UnionOmit<Event, "id">) => void;
-};
-
-const EventsContext = createContext<EventsContext | null>(null);
-
-export function useEventsContext() {
-  const context = useContext(EventsContext);
-  if (context == null) {
-    throw new Error("Must use within provider");
-  }
-  return context;
-}
+import { EventsProvider } from "./context/EventsContext";
 
 function Calendar() {
-  const [events, setEvents] = useState<Event[]>([]);
-
-  const addEvent = (event: UnionOmit<Event, "id">) => {
-    setEvents((currentEvents) => [
-      ...currentEvents,
-      {
-        id: crypto.randomUUID(),
-        ...event,
-      },
-    ]);
-  };
-
   return (
     <CalendarProvider>
-      <EventsContext.Provider value={{ events, addEvent }}>
+      <EventsProvider>
         <div className="calendar">
           <CalendarHeader />
           <CalendarBody />
@@ -142,7 +113,7 @@ function Calendar() {
       </div> */}
           <EventModal />
         </div>
-      </EventsContext.Provider>
+      </EventsProvider>
     </CalendarProvider>
   );
 }
