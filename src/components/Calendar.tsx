@@ -8,9 +8,13 @@ import {
 } from "date-fns";
 import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
-import EventModal from "./EventModal";
+import EventModal from "./NewEventModal";
+import { UnionOmit } from "../types/UnionOmit";
+import { Event } from "../types/Event";
 
-type ContextType = {
+const EVENT_COLORS: string[] = ["red", "green", "blue"];
+
+type CalendarContext = {
   visibleMonth: Date;
   visibleDates: Date[];
   setVisibleMonth: React.Dispatch<React.SetStateAction<Date>>;
@@ -18,16 +22,31 @@ type ContextType = {
   setEventDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   isEventModalOpen: boolean;
   setIsEventModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  EVENT_COLORS: string[];
 };
 
-const Context = createContext<ContextType | null>(null);
+type EventsContext = {
+  events: Event[];
+  addEvent: (event: UnionOmit<Event, "id">) => void;
+};
+
+const CalendarContext = createContext<CalendarContext | null>(null);
+const EventsContext = createContext<EventsContext | null>(null);
 
 export function useCalendarContext() {
-  const calendarContext = useContext(Context);
-  if (calendarContext == null) {
+  const context = useContext(CalendarContext);
+  if (context == null) {
     throw new Error("Must use within provider");
   }
-  return calendarContext;
+  return context;
+}
+
+export function useEventsContext() {
+  const context = useContext(EventsContext);
+  if (context == null) {
+    throw new Error("Must use within provider");
+  }
+  return context;
 }
 
 function Calendar() {
@@ -39,8 +58,20 @@ function Calendar() {
     end: endOfWeek(endOfMonth(visibleMonth)),
   });
 
+  const [events, setEvents] = useState<Event[]>([]);
+
+  const addEvent = (event: UnionOmit<Event, "id">) => {
+    setEvents((currentEvents) => [
+      ...currentEvents,
+      {
+        id: crypto.randomUUID(),
+        ...event,
+      },
+    ]);
+  };
+
   return (
-    <Context.Provider
+    <CalendarContext.Provider
       value={{
         visibleMonth,
         visibleDates,
@@ -49,13 +80,15 @@ function Calendar() {
         setEventDate,
         isEventModalOpen,
         setIsEventModalOpen,
+        EVENT_COLORS,
       }}
     >
-      <div className="calendar">
-        <CalendarHeader />
-        <CalendarBody />
+      <EventsContext.Provider value={{ events, addEvent }}>
+        <div className="calendar">
+          <CalendarHeader />
+          <CalendarBody />
 
-        {/* <div class="modal">
+          {/* <div class="modal">
         <div class="overlay"></div>
         <div class="modal-body">
           <div class="modal-title">
@@ -154,9 +187,10 @@ function Calendar() {
           </form>
         </div>
       </div> */}
-        <EventModal />
-      </div>
-    </Context.Provider>
+          <EventModal />
+        </div>
+      </EventsContext.Provider>
+    </CalendarContext.Provider>
   );
 }
 
