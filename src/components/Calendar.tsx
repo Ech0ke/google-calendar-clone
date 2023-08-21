@@ -11,35 +11,16 @@ import CalendarBody from "./CalendarBody";
 import EventModal from "./NewEventModal";
 import { UnionOmit } from "../types/UnionOmit";
 import { Event } from "../types/Event";
+import { CalendarContext } from "./context/CalendarContext";
 
 const EVENT_COLORS: string[] = ["red", "green", "blue"];
-
-type CalendarContext = {
-  visibleMonth: Date;
-  visibleDates: Date[];
-  setVisibleMonth: React.Dispatch<React.SetStateAction<Date>>;
-  eventDate: Date | undefined;
-  setEventDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
-  isEventModalOpen: boolean;
-  setIsEventModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  EVENT_COLORS: string[];
-};
 
 type EventsContext = {
   events: Event[];
   addEvent: (event: UnionOmit<Event, "id">) => void;
 };
 
-const CalendarContext = createContext<CalendarContext | null>(null);
 const EventsContext = createContext<EventsContext | null>(null);
-
-export function useCalendarContext() {
-  const context = useContext(CalendarContext);
-  if (context == null) {
-    throw new Error("Must use within provider");
-  }
-  return context;
-}
 
 export function useEventsContext() {
   const context = useContext(EventsContext);

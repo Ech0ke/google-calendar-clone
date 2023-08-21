@@ -1,4 +1,4 @@
-import { useCalendarContext } from "./Calendar";
+import { useCalendarContext } from "./context/CalendarContext";
 import Day from "./Day";
 
 function CalendarBody() {

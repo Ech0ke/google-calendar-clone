@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import { useCalendarContext, useEventsContext } from "./Calendar";
+import { useCalendarContext } from "./context/CalendarContext";
+import { useEventsContext } from "./Calendar";
 import { Event } from "../types/Event";
 import { UnionOmit } from "../types/UnionOmit";
 
@@ -21,11 +22,6 @@ function EventForm({
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Name: ", nameRef.current?.value);
-    console.log("Allday: ", isAllDayChecked);
-    console.log("Start time: ", startTime);
-    console.log("End time: ", endTime);
-    console.log("Color: ", selectedColor);
     if (nameRef.current?.value && date) {
       if (startTime === "" && endTime === "" && isAllDayChecked) {
         const event: UnionOmit<Event, "id"> = {

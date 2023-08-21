@@ -1,4 +1,4 @@
-import { useCalendarContext } from "./Calendar";
+import { useCalendarContext } from "./context/CalendarContext";
 import { addMonths, format } from "date-fns";
 
 export default function CalendarHeader() {
