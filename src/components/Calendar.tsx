@@ -1,8 +1,8 @@
 import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
 import EventModal from "./NewEventModal";
-import { CalendarProvider } from "./context/CalendarContext";
-import { EventsProvider } from "./context/EventsContext";
+import { CalendarProvider } from "../context/CalendarContext";
+import { EventsProvider } from "../context/EventsContext";
 
 function Calendar() {
   return (

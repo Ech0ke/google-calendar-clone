@@ -1,5 +1,5 @@
 import React from "react";
-import { useCalendarContext } from "./context/CalendarContext";
+import { useCalendarContext } from "../context/CalendarContext";
 import { isBefore, isSameDay, isSameMonth, startOfDay } from "date-fns";
 
 type DayProps = {

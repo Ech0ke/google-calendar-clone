@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import { useEventsContext } from "./context/EventsContext";
+import { useEventsContext } from "../context/EventsContext";
 import { EVENT_COLORS, Event } from "../types/Event";
 import { UnionOmit } from "../types/UnionOmit";
 

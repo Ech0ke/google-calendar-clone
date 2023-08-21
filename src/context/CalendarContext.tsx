@@ -7,7 +7,7 @@ import {
 } from "date-fns";
 import { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
-import { EVENT_COLORS } from "../../types/Event";
+import { EVENT_COLORS } from "../types/Event";
 
 type CalendarContext = {
   visibleMonth: Date;

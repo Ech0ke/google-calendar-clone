@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { useCalendarContext } from "./context/CalendarContext";
+import { useCalendarContext } from "../context/CalendarContext";
 import EventForm from "./EventForm";
 
 function EventModal() {

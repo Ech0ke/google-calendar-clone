@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import { UnionOmit } from "../../types/UnionOmit";
-import { Event } from "../../types/Event";
+import { UnionOmit } from "../types/UnionOmit";
+import { Event } from "../types/Event";
 
 type EventsContext = {
   events: Event[];
