@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { useCalendarContext } from "../context/CalendarContext";
 import { isBefore, isSameDay, isSameMonth, startOfDay } from "date-fns";
 import { useEventsContext } from "../context/EventsContext";
+import EventCard from "./EventCard";
 
 type DayProps = {
   date: Date;
@@ -49,9 +50,7 @@ function Day({ date, weekName }: DayProps) {
       </div>
       <div className="events">
         {matchingEvents.map((event) => (
-          <button className="all-day-event blue event">
-            <div className="event-name">{event.name}</div>
-          </button>
+          <EventCard key={event.id} {...event} />
         ))}
       </div>
 
