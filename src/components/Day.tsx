@@ -28,8 +28,8 @@ function Day({ date, weekName }: DayProps) {
       return a.name.localeCompare(b.name);
     }
     //Parse startTime string into Date
-    const aStartTime = parse(a.startTime, "HH:mm", new Date());
-    const bStartTime = parse(b.startTime, "HH:mm", new Date());
+    const aStartTime = parse(a.startTime, "h:mm a", new Date());
+    const bStartTime = parse(b.startTime, "h:mm a", new Date());
 
     // Sort by start time
     return aStartTime.getTime() - bStartTime.getTime();
