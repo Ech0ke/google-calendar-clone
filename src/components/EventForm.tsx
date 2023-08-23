@@ -3,6 +3,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useEventsContext } from "../context/EventsContext";
 import { EVENT_COLORS, Event } from "../types/Event";
 import { UnionOmit } from "../types/UnionOmit";
+import { format, parse } from "date-fns";
 
 function EventForm({
   date,
@@ -21,7 +22,7 @@ function EventForm({
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (nameRef.current?.value && date) {
-      if (startTime === "" && endTime === "" && isAllDayChecked) {
+      if (isAllDayChecked) {
         const event: UnionOmit<Event, "id"> = {
           name: nameRef.current.value,
           color: selectedColor,
@@ -37,8 +38,8 @@ function EventForm({
           color: selectedColor,
           date: date,
           allDay: false,
-          startTime: startTime,
-          endTime: endTime,
+          startTime: formatToAMPM(startTime),
+          endTime: formatToAMPM(endTime),
         };
         addEvent(event);
       }
@@ -54,6 +55,12 @@ function EventForm({
       setStartTime("");
       setEndTime("");
     }
+  };
+
+  // Function to convert 24-hour format to AM/PM format
+  const formatToAMPM = (time: string) => {
+    const parsedTime = parse(time, "HH:mm", new Date());
+    return format(parsedTime, "h:mm a");
   };
 
   return (
