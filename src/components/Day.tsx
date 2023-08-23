@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { useCalendarContext } from "../context/CalendarContext";
-import { isBefore, isSameDay, isSameMonth, startOfDay } from "date-fns";
+import { isBefore, isSameDay, isSameMonth, parse, startOfDay } from "date-fns";
 import { useEventsContext } from "../context/EventsContext";
 import EventCard from "./EventCard";
+import { Event } from "../types/Event";
 
 type DayProps = {
   date: Date;
@@ -15,10 +16,34 @@ function Day({ date, weekName }: DayProps) {
 
   const { events } = useEventsContext();
 
+  // Events sorting function
+  const sortEvents = (a: Event, b: Event) => {
+    // All-day events come first
+    if (a.allDay !== b.allDay) {
+      return a.allDay ? -1 : 1;
+    }
+
+    //When both events are allDay, then sort alpabetically by event name
+    if (a.allDay && b.allDay) {
+      return a.name.localeCompare(b.name);
+    }
+    //Parse startTime string into Date
+    const aStartTime = parse(a.startTime, "HH:mm", new Date());
+    const bStartTime = parse(b.startTime, "HH:mm", new Date());
+
+    // Sort by start time
+    return aStartTime.getTime() - bStartTime.getTime();
+  };
+
   //find events taht occour on rendered date
   const matchingEvents = useMemo(
     () => events.filter((event) => isSameDay(event.date, date)),
     [events, date]
+  );
+
+  const sortedEvents: Event[] = useMemo(
+    () => matchingEvents.slice().sort(sortEvents),
+    [matchingEvents]
   );
 
   console.log("Matched events: ", matchingEvents);
@@ -49,7 +74,7 @@ function Day({ date, weekName }: DayProps) {
         </button>
       </div>
       <div className="events">
-        {matchingEvents.map((event) => (
+        {sortedEvents.map((event) => (
           <EventCard key={event.id} {...event} />
         ))}
       </div>
