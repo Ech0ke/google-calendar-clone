@@ -4,48 +4,86 @@ import { useEventsContext } from "../context/EventsContext";
 import { EVENT_COLORS, Event } from "../types/Event";
 import { UnionOmit } from "../types/UnionOmit";
 import { format, parse } from "date-fns";
+import { prepareEventObject } from "../helpers/prepareEventObject";
 
-function EventForm({
-  date,
-  handleClose,
-}: {
+type EventFormProps = {
   date?: Date;
   handleClose: () => void;
-}) {
-  const { addEvent } = useEventsContext();
+  editableEvent?: Event;
+};
+
+function EventForm({ date, handleClose, editableEvent }: EventFormProps) {
+  const { addEvent, editEvent, deleteEvent } = useEventsContext();
   const nameRef = useRef<HTMLInputElement>(null);
-  const [isAllDayChecked, setIsAllDayChecked] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
-  const [selectedColor, setSelectedColor] = useState<string>(EVENT_COLORS[2]);
+  const [isAllDayChecked, setIsAllDayChecked] = useState<boolean>(
+    editableEvent?.allDay || false
+  );
+  const [startTime, setStartTime] = useState<string>(
+    editableEvent?.startTime
+      ? format(parse(editableEvent.startTime, "h:mm a", new Date()), "HH:mm")
+      : ""
+  );
+  const [endTime, setEndTime] = useState<string>(
+    editableEvent?.startTime
+      ? format(parse(editableEvent.endTime, "h:mm a", new Date()), "HH:mm")
+      : ""
+  );
+  const [selectedColor, setSelectedColor] = useState<string>(
+    editableEvent?.color || EVENT_COLORS[2]
+  );
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (nameRef.current?.value && date) {
-      if (isAllDayChecked) {
-        const event: UnionOmit<Event, "id"> = {
-          name: nameRef.current.value,
-          color: selectedColor,
-          date: date,
-          allDay: true,
-          startTime: undefined as never,
-          endTime: undefined as never,
-        };
-        addEvent(event);
+      // if (isAllDayChecked) {
+      //   const event: UnionOmit<Event, "id"> = {
+      //     name: nameRef.current.value,
+      //     color: selectedColor,
+      //     date: date ,
+      //     allDay: true,
+      //     startTime: undefined as never,
+      //     endTime: undefined as never,
+      //   };
+      //   addEvent(event);
+      // } else {
+      //   const event: UnionOmit<Event, "id"> = {
+      //     name: nameRef.current.value,
+      //     color: selectedColor,
+      //     date: date,
+      //     allDay: false,
+      //     startTime: formatToAMPM(startTime),
+      //     endTime: formatToAMPM(endTime),
+      //   };
+      //   addEvent(event);
+      // }
+      const event = prepareEventObject({
+        id: editableEvent?.id === "" ? undefined : editableEvent?.id,
+        name: nameRef.current.value,
+        color: selectedColor,
+        date: date || new Date(),
+        allDay: isAllDayChecked,
+        startTime: startTime,
+        endTime: endTime,
+      });
+
+      if (editableEvent) {
+        editEvent(event as Event);
       } else {
-        const event: UnionOmit<Event, "id"> = {
-          name: nameRef.current.value,
-          color: selectedColor,
-          date: date,
-          allDay: false,
-          startTime: formatToAMPM(startTime),
-          endTime: formatToAMPM(endTime),
-        };
-        addEvent(event);
+        addEvent(event as UnionOmit<Event, "id">);
       }
+
       handleClose();
     } else {
       throw new Error("Failed to add event, check logic");
+    }
+  };
+
+  const handleDeleteEvent = () => {
+    if (editableEvent) {
+      deleteEvent(editableEvent.id);
+      handleClose();
+    } else {
+      throw new Error("Failed to delete the event.");
     }
   };
 
@@ -57,17 +95,18 @@ function EventForm({
     }
   };
 
-  // Function to convert 24-hour format to AM/PM format
-  const formatToAMPM = (time: string) => {
-    const parsedTime = parse(time, "HH:mm", new Date());
-    return format(parsedTime, "h:mm a");
-  };
-
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-group">
         <label htmlFor="name">Name</label>
-        <input type="text" name="name" id="name" ref={nameRef} required />
+        <input
+          type="text"
+          name="name"
+          id="name"
+          ref={nameRef}
+          defaultValue={editableEvent?.name}
+          required
+        />
       </div>
       <div className="form-group checkbox">
         <input
@@ -148,12 +187,22 @@ function EventForm({
         </div>
       </div>
       <div className="row">
-        <button className="btn btn-success" type="submit">
-          Add
-        </button>
-        {/* <button className="btn btn-delete" type="button">
-          Delete
-        </button> */}
+        {!editableEvent ? (
+          <button className="btn btn-success" type="submit">
+            Add
+          </button>
+        ) : (
+          <>
+            <button className="btn btn-success">Save</button>
+            <button
+              className="btn btn-delete"
+              type="button"
+              onClick={handleDeleteEvent}
+            >
+              Delete
+            </button>{" "}
+          </>
+        )}
       </div>
     </form>
   );

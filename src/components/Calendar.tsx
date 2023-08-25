@@ -1,6 +1,6 @@
 import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
-import EventModal from "./NewEventModal";
+import EventModal from "./EventModal";
 import { CalendarProvider } from "../context/CalendarContext";
 import { EventsProvider } from "../context/EventsContext";
 

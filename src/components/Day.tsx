@@ -46,8 +46,6 @@ function Day({ date, weekName }: DayProps) {
     [matchingEvents]
   );
 
-  console.log("Matched events: ", matchingEvents);
-
   const handleEventModalOpen = () => {
     setEventDate(date);
     setIsEventModalOpen(true);
